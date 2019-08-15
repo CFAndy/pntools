@@ -223,9 +223,10 @@ def parse_pnml_file(file):
         for transition_node in net_node.iter(xmlns+'transition'):
             transition = Transition()
             transition.id = transition_node.get('id')
-            transition.label = transition.id if transition_node.find('./name/text')== None else transition_node.find('./name/text').text
-            position_node = transition_node.find('./graphics/position')
-            transition.position = [int(float(position_node.get('x'))), int(float(position_node.get('y')))]
+            name = transition_node.find('./toolspecific/name').get('value')
+            transition.label = 'transition:' +  transition.id + ':' + name #if transition_node.find('./name/text')== None else transition_node.find('./name/text').text
+            #position_node = transition_node.find('./graphics/position')
+            #transition.position = [int(float(position_node.get('x'))), int(float(position_node.get('y')))]
             off_node = transition_node.find('./'+xmlns+'name/'+xmlns+'graphics/'+xmlns+'offset')
             if off_node == None :
                 transition.offset = [0,0]
@@ -238,17 +239,18 @@ def parse_pnml_file(file):
         for place_node in net_node.iter(xmlns+'place'):
             place = Place()
             place.id = place_node.get('id')
-            place.label = place.id if place_node.find('./'+xmlns+'name/'+xmlns+'text')== None else place_node.find('./'+xmlns+'name/'+xmlns+'text').text
-            position_node = place_node.find('./'+xmlns+'graphics/'+xmlns+'position')
-            place.position = [int(float(position_node.get('x'))), int(float(position_node.get('y')))]
-
+            type = place_node.find('./toolspecific/type').get('value')
+            place.label = 'place:' + type + ':' + place.id #if place_node.find('./'+xmlns+'name/'+xmlns+'text')== None else place_node.find('./'+xmlns+'name/'+xmlns+'text').text
+            #position_node = place_node.find('./'+xmlns+'graphics/'+xmlns+'position')
+            #place.position = [int(float(position_node.get('x'))), int(float(position_node.get('y')))]
+            place.position = [0,0]
             off_node = place_node.find('./'+xmlns+'name/'+xmlns+'graphics/'+xmlns+'offset')
             if off_node == None :
                 place.offset = [0,0]
             else :
                 place.offset = [int(off_node.get('x')), int(off_node.get('y'))]
 
-            place.marking = 0 if place_node.find('./initialMarking/text')== None else int(place_node.find('./initialMarking/text').text)
+            place.marking = 0 #if place_node.find('./initialMarking/text')== None else int(place_node.find('./initialMarking/text').text)
             net.places[place.id] = place
 
         # and arcs
